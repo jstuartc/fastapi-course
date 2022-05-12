@@ -42,10 +42,11 @@ def get_post(id: int, db: Session = Depends(get_db), current_user: int = Depends
     # cursor.execute('''SELECT * FROM posts WHERE id = %s''', (str(id)))
     # post = cursor.fetchone()
 
-    post = db.query(models.Post, func.count(models.Votes.post_id).label("votes")).join(models.Votes, models.Votes.post_id == models.Post.id, isouter=True).group_by(models.Post.id).first()
+    post = db.query(models.Post, func.count(models.Votes.post_id).label("votes")).join(models.Votes, models.Votes.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.id == id).first()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"post with id {id} does not exist")    
+            detail=f"post with id {id} does not exist")
+
     return post
 
 @router.delete("/{id}",status_code = status.HTTP_204_NO_CONTENT)
