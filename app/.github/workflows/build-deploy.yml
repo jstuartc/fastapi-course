@@ -2,8 +2,35 @@ name: Build and Deploy Code
 
 on: [push, pull_request]
 
+
 jobs:
   job1:
+    environment:
+      name: testing
+    env:  # Can put these on settings tab in github to make secret
+      DATABASE_HOSTNAME: localhost
+      DATABASE_PORT: 5432
+      DATABASE_PASSWORD: iamjames
+      DATABASE_USERNAME: postgres
+      DATABASE_NAME: fastapi
+      SECRET_KEY: 0dfjhwre23ewdfdj3hr30xv98432
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: 30
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: ${{testing.DATABASE_PASSWORD}}
+          POSTGRES_DB: ${{testing.DATABASE_NAME}}_test
+        ports:
+          5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
     runs-on: ubuntu-latest
     steps:
       - name: pulling git repo
@@ -20,4 +47,5 @@ jobs:
         run:
           pip install pytest
           pytest
+  job2:
       
