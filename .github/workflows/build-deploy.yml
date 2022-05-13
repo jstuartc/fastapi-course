@@ -5,8 +5,6 @@ on: [push, pull_request]
 
 jobs:
   job1:
-    environment:
-      name: testing
     env:  # Can put these on settings tab in github to make secret
       DATABASE_HOSTNAME: localhost
       DATABASE_PORT: 5432
